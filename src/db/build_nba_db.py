@@ -26,7 +26,8 @@ cur.execute ("DROP TABLE IF EXISTS team;")
 cur.execute("""
     CREATE TABLE team (
         team_id INTEGER PRIMARY KEY NOT NULL,
-        team_name TEXT NOT NULL UNIQUE,
+        team_name_short TEXT NOT NULL UNIQUE,
+        team_name TEXT NOT NULL,
         city TEXT,
         state TEXT
     );
