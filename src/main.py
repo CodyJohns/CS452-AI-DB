@@ -11,7 +11,14 @@ openai.api_key = os.getenv("OPENAI_KEY")
 
 sys = """
 Respond only with a syntactically correct SQL query using the information given from the Human User.
+The SQL queries should answer the question using data found in the following database schema
 """
+with open('nba_db.txt', 'r') as f:
+  file_contents = f.read() 
+  
+dbschema = file_contents
+
+sys = dbschema + sys
 
 response = openai.ChatCompletion.create(
   	model="gpt-3.5-turbo",
@@ -43,3 +50,4 @@ except sqlite3.Error as e:
 finally:
   if conn:
     conn.close()
+	

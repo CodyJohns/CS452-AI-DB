@@ -1,0 +1,69 @@
+CREATE TABLE player (
+    player_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_name TEXT NOT NULL,
+    team_id INTEGER,
+    age INTEGER,
+    height REAL,
+    weight REAL,
+    college TEXT,
+    birth_country TEXT,
+    draft_year INTEGER,
+    draft_round INTEGER,
+    FOREIGN KEY(team_id) 
+        REFERENCES team(team_id)
+        ON DELETE SET NULL
+);
+
+CREATE TABLE team (
+    team_id INTEGER PRIMARY KEY NOT NULL,
+    team_name TEXT NOT NULL UNIQUE,
+    city TEXT,
+    state TEXT
+);
+
+CREATE TABLE match (
+    team_id_1 INTEGER NOT NULL,
+    team_id_2 INTEGER NOT NULL CHECK(team_id_2 != team_id_1),
+    date TEXT NOT NULL,
+    winning_team INTEGER NOT NULL,
+    PRIMARY KEY(team_id_1, team_id_2, date),
+    FOREIGN KEY(team_id_1)
+        REFERENCES team(team_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(team_id_2)
+        REFERENCES team(team_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE contract (
+    contract_id INTEGER PRIMARY KEY,
+    player_id INTEGER NOT NULL,
+    team_id INTEGER NOT NULL,
+    total_value REAL,
+    start_date TEXT,
+    end_date TEXT,
+    FOREIGN KEY(player_id)
+        REFERENCES player(player_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(team_id)
+        REFERENCES team(team_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE sponsor (
+    team_id INTEGER NOT NULL,
+    sponsor_name TEXT NOT NULL,
+    PRIMARY KEY(team_id, sponsor_name),
+    FOREIGN KEY(team_id)
+        REFERENCES team(team_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE owner (
+    team_id INTEGER NOT NULL,
+    owner_name TEXT NOT NULL,
+    PRIMARY KEY(team_id, owner_name),
+    FOREIGN KEY(team_id)
+        REFERENCES team(team_id)
+        ON DELETE CASCADE
+);
