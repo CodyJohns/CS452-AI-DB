@@ -2,10 +2,10 @@ import sqlite3
 import os
 import openai
 from dotenv import load_dotenv
+import sqlvalidator
 
 load_dotenv()
 
-msg = input("Input question: ")
 
 openai.api_key = os.getenv("OPENAI_KEY")
 
@@ -21,34 +21,40 @@ dbschema = file_contents
 
 sys = dbschema + sys
 
-response = openai.ChatCompletion.create(
-  	model="gpt-3.5-turbo",
-  	messages=[
-    	{"role": "system", "content": sys},
-    	{"role": "user", "content": msg}
-  	],
-  	temperature=0,
-  	max_tokens=256
-)
+msg = input("Input question: ")
+try:
+	response = openai.ChatCompletion.create(
+		model="gpt-3.5-turbo",
+		messages=[
+			{"role": "system", "content": sys},
+			{"role": "user", "content": msg}
+		],
+		temperature=0,
+		max_tokens=256
+	)
+except Exception as e:
+	print("Could not get response from OpenAI:",e)
 
 sql = response['choices'][0]['message']['content']
 
-print(sql)
+sql_val = sqlvalidator.parse(sql)
+if not sql_val.is_valid():
+	raise ValueError("Invalid SQL syntax generated. Try rephrasing your question.")
 
 try:
 	conn = sqlite3.connect("nba.db")
 	c = conn.cursor()
 	c.execute(sql)
-    
+	
 	results = c.fetchall()
-    
+	
 	for result in results:
 		print(result)
-    
+	
 except sqlite3.Error as e:
-  print("Error executing query", e)
+	print("Error executing query", e)
 
 finally:
-  if conn:
-    conn.close()
-	
+	if conn:
+		conn.close()
+		
