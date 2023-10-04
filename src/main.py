@@ -11,7 +11,8 @@ openai.api_key = os.getenv("OPENAI_KEY")
 
 sys = """
 Respond only with a syntactically correct SQL query using the information given from the Human User.
-The SQL queries should answer the question using data found in the following database schema
+The SQL queries should answer the question using data found in the following database schema.
+NBA team names should be formatted like "full city name team name" example Los Angeles Clippers.
 """
 with open('nba_db.txt', 'r') as f:
   file_contents = f.read() 
