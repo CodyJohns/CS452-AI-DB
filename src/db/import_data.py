@@ -1,10 +1,10 @@
 import sqlite3
 import openpyxl
 import random
-import datetime
+from datetime import datetime, timedelta
 from faker import Faker
 
-wb = openpyxl.load_workbook('NBA_Dataset.xlsx')
+wb = openpyxl.load_workbook('NBA_Dataset2.xlsx')
 
 conn = sqlite3.connect("nba.db")
 cur = conn.cursor()
@@ -92,18 +92,44 @@ cur.executemany("""
 conn.commit()
 
 #match
-matches = []
-fake = Faker()
-start_date = datetime.date(year=2021, month=1, day=1)
-end_date = datetime.date(year=2021, month=11, day=30)
+# matches = []
+# fake = Faker()
+# start_date = datetime.date(year=2021, month=1, day=1)
+# end_date = datetime.date(year=2021, month=11, day=30)
 
-while len(matches) < 20:
-    opt1 = random.choice(teams)
-    opt2 = random.choice(teams)
-    if opt1[0] != opt2[0]:
-        date = fake.date_between(start_date, end_date)
-        win_prob = [1, 2, 3, 4, 5, 6]
-        matches.append([opt1[0], opt2[0], date.strftime("%m/%d/%Y"), opt1[0] if random.choice(win_prob) % 2 == 0 else opt2[0]])
+# active_teams = [team for team in teams if team[0] not in [11, 13, 31, 32, 33, 35]]
+# print(active_teams)
+# print(len(active_teams))
+
+
+# while len(matches) < 20:
+#     opt1 = random.choice(teams)
+#     opt2 = random.choice(teams)
+#     if opt1[0] != opt2[0]:
+#         date = fake.date_between(start_date, end_date)
+#         win_prob = [1, 2, 3, 4, 5, 6]
+#         matches.append([opt1[0], opt2[0], date.strftime("%m/%d/%Y"), opt1[0] if random.choice(win_prob) % 2 == 0 else opt2[0]])
+
+ws = wb['matches']
+matches = []
+
+for row in ws.iter_rows():
+    row_vals = []
+    row_vals.append(team_map[row[1].value])
+    row_vals.append(team_map[row[2].value])
+
+    date_arr = row[0].value.split('/')
+    date_arr[2] = date_arr[2].split(' ')[0]
+    date_arr = [int(date) for date in date_arr]
+    match_date = datetime(year=date_arr[2], month=date_arr[1], day=date_arr[0])
+    row_vals.append(match_date)
+
+    if int(row[3].value) > int(row[4].value):
+        row_vals.append(team_map[row[1].value])
+    else:
+        row_vals.append(team_map[row[2].value])
+    
+    matches.append(row_vals)
 
 cur.execute("DELETE FROM match;")
 cur.executemany("""

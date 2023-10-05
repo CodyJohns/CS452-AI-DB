@@ -37,6 +37,8 @@ except Exception as e:
 
 sql = response['choices'][0]['message']['content']
 
+print(sql)
+
 sql_val = sqlvalidator.parse(sql)
 if not sql_val.is_valid():
 	raise ValueError("Invalid SQL syntax generated. Try rephrasing your question.")
