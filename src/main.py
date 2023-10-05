@@ -43,7 +43,7 @@ sql_val = sqlvalidator.parse(sql)
 if not sql_val.is_valid():
 	raise ValueError("Invalid SQL syntax generated. Try rephrasing your question.")
 
-print('Results')
+print('Results:')
 try:
 	conn = sqlite3.connect("nba.db")
 	c = conn.cursor()
