@@ -14,7 +14,7 @@ Respond only with a syntactically correct SQL query using the information given 
 The SQL queries should answer the question using data found in the following database schema.
 NBA team names should be formatted like "full city name team name" example Los Angeles Clippers.
 """
-with open('nba_db.txt', 'r') as f:
+with open('src/nba_db.txt', 'r') as f:
   file_contents = f.read() 
   
 dbschema = file_contents
@@ -36,6 +36,11 @@ except Exception as e:
 	print("Could not get response from OpenAI:",e)
 
 sql = response['choices'][0]['message']['content']
+
+illegal = ["INSERT", "DELETE", "UPDATE", "DROP"]
+
+if any(i in sql for i in illegal):
+	raise Exception("Illegal SQL operation detected. Only read queries are allowed.")
 
 print('Query:\n', sql)
 
