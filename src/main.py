@@ -14,7 +14,7 @@ Respond only with a syntactically correct SQL query using the information given 
 The SQL queries should answer the question using data found in the following database schema.
 NBA team names should be formatted like "full city name team name" example Los Angeles Clippers.
 """
-with open('src/nba_db.txt', 'r') as f:
+with open('nba_db.txt', 'r') as f:
   file_contents = f.read() 
   
 dbschema = file_contents
